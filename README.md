@@ -147,3 +147,89 @@ Explanation Layer
         |
         v
 Chrome Extension Popup
+
+
+# Results and Analysis
+
+The project was evaluated in multiple stages, starting with exploratory analysis and supervised classification, followed by unsupervised analysis of phishing URL patterns.
+
+## 1. Feature Correlation Analysis
+
+Before training the models, we analyzed the relationships between the available features using a correlation matrix.
+
+![Feature Correlation Heatmap](docs/images/correlation-heatmap.png)
+
+The heatmap helps identify relationships between URL characteristics and the target class. It also provides an initial understanding of which features may contain overlapping information.
+
+The diagonal represents the correlation of each feature with itself, while the remaining cells show the relationship between pairs of features.
+
+This analysis was used as part of the exploratory data analysis before model training.
+
+---
+
+## 2. Random Forest Classification
+
+After preprocessing the dataset, Random Forest was trained using the 30 engineered features.
+
+The current evaluation produced:
+
+| Metric | Result |
+|---|---:|
+| Accuracy | 96.92% |
+| Precision | 96.87% |
+| Recall | 97.65% |
+| F1 Score | 97.26% |
+
+![Random Forest Results](docs/images/random-forest-results.png)
+
+### Confusion Matrix
+
+The confusion matrix provides a more detailed view of the classification results.
+
+For the current test set:
+
+- True Negatives: 937
+- False Positives: 39
+- False Negatives: 29
+- True Positives: 1206
+
+This shows that the model correctly classified the majority of both legitimate and phishing URLs while keeping the number of incorrect classifications relatively low.
+
+The false-positive rate is evaluated separately because minimizing incorrect blocking of legitimate websites is a specific requirement of the project.
+
+---
+
+## 3. Feature Importance
+
+Random Forest also provides feature importance values, which help identify which engineered features contributed most to the classification process.
+
+The current top features include:
+
+- HTTPS
+- AnchorURL
+- WebsiteTraffic
+- SubDomains
+- LinksInScriptTags
+- PrefixSuffix-
+- ServerFormHandler
+- LinksPointingToPage
+- RequestURL
+- DomainRegLen
+
+![Random Forest Feature Importance](docs/images/random-forest-results.png)
+
+These results are also useful for the explanation component of the project because the system needs to provide users with understandable reasons when a URL is flagged.
+
+Feature importance should not be interpreted as proof that a feature alone causes a website to be phishing. It represents the contribution of the feature within the trained Random Forest model.
+
+---
+
+# 4. Phishing Attack Pattern Analysis
+
+After the supervised classification stage, we isolated the phishing URLs and performed unsupervised analysis.
+
+The current dataset contains:
+
+```text
+4,897 phishing URLs
+30 engineered features
