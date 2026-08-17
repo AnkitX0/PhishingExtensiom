@@ -1,0 +1,93 @@
+# Random Forest Classifier
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score
+from sklearn.metrics import recall_score, f1_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+import joblib
+
+rf_model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+rf_model.fit(X_train, y_train)
+
+rf_prediction = rf_model.predict(X_test)
+
+rf_accuracy = accuracy_score(y_test, rf_prediction)
+rf_precision = precision_score(y_test, rf_prediction)
+rf_recall = recall_score(y_test, rf_prediction)
+rf_f1 = f1_score(y_test, rf_prediction)
+
+print("=" * 50)
+print("RANDOM FOREST RESULTS")
+print("=" * 50)
+
+print("Accuracy  :", round(rf_accuracy * 100, 2), "%")
+print("Precision :", round(rf_precision * 100, 2), "%")
+print("Recall    :", round(rf_recall * 100, 2), "%")
+print("F1 Score  :", round(rf_f1 * 100, 2), "%")
+
+print("\nClassification Report")
+print(classification_report(y_test, rf_prediction))
+
+rf_cm = confusion_matrix(y_test, rf_prediction)
+
+plt.figure(figsize=(6, 5))
+
+sns.heatmap(
+    rf_cm,
+    annot=True,
+    fmt="d",
+    cmap="Blues"
+)
+
+plt.title("Random Forest Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+
+plt.show()
+
+# Feature importance
+
+importance = pd.DataFrame({
+    "Feature": X_train.columns,
+    "Importance": rf_model.feature_importances_
+})
+
+importance = importance.sort_values(
+    by="Importance",
+    ascending=False
+)
+
+print("\nTop 10 Important Features")
+print(importance.head(10))
+
+plt.figure(figsize=(10, 6))
+
+sns.barplot(
+    data=importance.head(10),
+    x="Importance",
+    y="Feature"
+)
+
+plt.title("Top 10 Important Features")
+plt.tight_layout()
+
+plt.show()
+
+# Save model
+
+joblib.dump(rf_model, "random_forest_model.pkl")
+
+# Save feature order
+
+feature_names = X_train.columns.tolist()
+
+joblib.dump(feature_names, "feature_names.pkl")
+
+print("\nFiles saved successfully:")
+print("random_forest_model.pkl")
+print("feature_names.pkl")
